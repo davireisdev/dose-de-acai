@@ -1,0 +1,9 @@
+# Fica só no computador: não vai para a Vercel
+.env*
+.vercel
+.claude
+logo
+.git
+.gitignore
+.nojekyll
+.vercelignore

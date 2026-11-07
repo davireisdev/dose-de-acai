@@ -3,3 +3,9 @@
 
 # Arquivos da logo para redes sociais: ficam só no computador, o site não usa
 logo/
+
+# Ligação local com o projeto da Vercel
+.vercel/
+
+.vercel
+.env*
