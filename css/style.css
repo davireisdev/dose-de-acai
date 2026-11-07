@@ -1,0 +1,819 @@
+/* Dose de Açaí: landing escura com as cores do selo, em formas curvas. Mobile-first.
+   Base: skill landing-escura-negocio-local.
+   Para mexer na identidade, troque só os tokens de :root. */
+
+:root {
+  color-scheme: dark;
+
+  /* Cores do selo */
+  --deep: #2A0838;      /* roxo escuro: contorno do selo */
+  --purple: #6A2287;    /* roxo: miolo do selo */
+  --plum: #4A1663;      /* fundo da prancha do selo */
+  --yellow: #FFD23F;    /* amarelo: anel e coroa */
+  --yellow-bright: #FFE27A;
+  --cream: #FFF4D6;     /* creme: "Dose" */
+  --lilac: #C99BDB;     /* brilho das frutinhas */
+  --green: #6DBA4A;     /* folhas */
+  --outline: #1E0E28;   /* contorno das faixas, do selo de preço e da foto */
+
+  /* Fundos da página, em degraus de roxo */
+  --ink-0: #1F0629;     /* página, topo, "como pedir", rodapé */
+  --ink-1: #3B0E50;     /* seção dos sabores */
+  --ink-2: #2A0838;     /* cards dos sabores */
+
+  /* Papéis */
+  --accent: var(--yellow);
+  --accent-bright: var(--yellow-bright);
+  --accent-wash: rgb(255 210 63 / 0.14);
+  --line: rgb(201 155 219 / 0.22);
+  --field: var(--purple);
+  --paper: var(--cream);
+  --paper-muted: #D9C7DF;
+
+  --font-display: "Shrikhand", Georgia, "Times New Roman", serif;
+  --font-label: "Archivo Black", system-ui, sans-serif;
+  --font-body: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --fs-body: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  --fs-small: 0.875rem;
+  --fs-h1: clamp(2.3rem, 1.2rem + 4.4vw, 4.5rem);
+  --fs-h2: clamp(2rem, 1.4rem + 2.6vw, 3.4rem);
+  --fs-h3: clamp(1.25rem, 1.1rem + 0.7vw, 1.6rem);
+
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+  --space-section: clamp(4rem, 2.8rem + 5.5vw, 7.5rem);
+  --curve-h: clamp(44px, 7vw, 100px);
+  --radius: 18px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+  -webkit-text-size-adjust: 100%;
+  scrollbar-color: var(--purple) var(--ink-0);
+  scrollbar-width: thin;
+}
+
+body {
+  margin: 0;
+  background: var(--ink-0);
+  color: var(--paper);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  caret-color: var(--accent);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+::selection { background: var(--accent); color: var(--deep); }
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--ink-0); }
+::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 10px; border: 2px solid var(--ink-0); }
+
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; }
+p { margin: 0; text-wrap: pretty; }
+button { font: inherit; }
+[hidden] { display: none !important; }
+
+h1, h2, h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-synthesis: none;
+  line-height: 1.1;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+h2 { font-size: var(--fs-h2); }
+h3 { font-size: var(--fs-h3); }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.wrap {
+  width: min(100% - 2 * var(--gutter), 1200px);
+  margin-inline: auto;
+}
+
+.icon {
+  width: 1.2em;
+  height: 1.2em;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.skip {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  background: var(--accent);
+  color: var(--deep);
+  font-weight: 700;
+  border-radius: 999px;
+}
+.skip:focus { top: 1rem; }
+
+/* Frutinhas do selo, como enfeite abaixo dos títulos */
+.ornament { display: block; width: 4.5rem; height: 1.4rem; overflow: visible; }
+
+/* ---------- Formas curvas ---------- */
+/* Onda entre seções: preenchida com a cor da seção seguinte, com um fio amarelo por cima */
+.curve {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 100%;
+  height: var(--curve-h);
+  display: block;
+  pointer-events: none;
+}
+.curve__fill { fill: var(--curve-fill); }
+.curve__line {
+  fill: none;
+  stroke: var(--yellow);
+  stroke-width: 3;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+.curve--to-menu { --curve-fill: var(--ink-1); }
+.curve--to-how { --curve-fill: var(--ink-0); }
+.curve--to-close { --curve-fill: var(--field); }
+.curve--to-footer { --curve-fill: var(--ink-0); }
+
+/* Círculos e manchas de fundo */
+.shape { position: absolute; z-index: -1; pointer-events: none; border-radius: 50%; }
+
+/* ---------- Botões ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 3.25rem;
+  padding: 0 1.6rem;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  font: 700 1rem/1 var(--font-body);
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.25s var(--ease-out), border-color 0.25s var(--ease-out), color 0.25s var(--ease-out), transform 0.2s var(--ease-out);
+}
+.btn:active { transform: scale(0.97); }
+.btn--sm { min-height: 2.75rem; padding: 0 1.1rem; font-size: 0.9375rem; }
+
+.btn--accent { background: var(--accent); color: var(--deep); }
+.btn--accent:hover { background: var(--accent-bright); }
+/* Abaixo do pedido mínimo: continua clicável (explica o que falta), mas parece apagado */
+.btn.is-blocked { opacity: 0.55; }
+.btn--accent.is-blocked:hover { background: var(--accent); }
+
+.btn--ghost { border-color: var(--accent); color: var(--paper); }
+.btn--ghost:hover { background: var(--accent-wash); border-color: var(--accent-bright); }
+
+.btn--ghost-light { border-color: rgb(255 244 214 / 0.65); color: var(--paper); }
+.btn--ghost-light:hover { background: rgb(255 244 214 / 0.12); border-color: var(--paper); }
+
+/* ---------- Cabeçalho ---------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--ink-0);
+  border-bottom: 1px solid var(--line);
+}
+.site-header__in {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 0.5rem;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+  border-radius: 999px;
+}
+.brand__logo { width: 46px; height: 46px; flex: none; }
+.brand__name {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--paper);
+  white-space: nowrap;
+}
+.brand__name span { color: var(--yellow); }
+@media (max-width: 350px) { .brand__name { display: none; } }
+
+.nav { display: none; }
+.nav a {
+  padding: 0.5rem 0.25rem;
+  color: var(--paper-muted);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav a:hover { color: var(--accent); }
+
+@media (min-width: 760px) {
+  .nav { display: flex; gap: 2rem; margin-left: auto; margin-right: 1rem; }
+}
+
+/* ---------- Hero ---------- */
+/* Foto em arco no centro, faixas dos sabores passando por trás e o selo de preço no canto.
+   Celular: foto menor e centralizada (a original é pequena), texto embaixo. */
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-bottom: var(--curve-h);
+}
+.hero__in { display: grid; }
+.hero__visual { position: relative; padding-block: 2.25rem 2rem; }
+
+.hero__frame {
+  position: relative;
+  z-index: 1;
+  width: min(68%, 19rem);
+  margin-inline: auto;
+}
+.hero__media {
+  position: relative;
+  margin: 0;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 999px 999px 28px 28px / 46% 46% 28px 28px;
+  background: var(--ink-2);
+  box-shadow: 0 0 0 5px var(--outline);
+}
+.hero__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 18%;
+}
+
+/* Selo de preço, amarelo como o anel da logo */
+.price-badge {
+  --b: clamp(5.5rem, 4rem + 5vw, 8.5rem);
+  position: absolute;
+  right: -14%;
+  bottom: -5%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: var(--b);
+  aspect-ratio: 1;
+  margin: 0;
+  border: 4px solid var(--outline);
+  border-radius: 50%;
+  background: var(--yellow);
+  color: #2A1238;
+  font-size: calc(var(--b) * 0.1);
+  line-height: 1;
+  transform: rotate(-12deg);
+}
+.price-badge span { font-weight: 700; font-size: 1em; }
+.price-badge strong { font-family: var(--font-display); font-weight: 400; font-size: 2.9em; line-height: 1.1; }
+
+/* Faixas dos sabores: uma por sabor, inclinadas, correndo em sentidos alternados */
+.ribbons {
+  --ribbon-h: clamp(40px, 26px + 2.4vw, 60px);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 0;
+  width: 160vw;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--ribbon-h) * 0.14);
+  transform: translate(-50%, -50%) rotate(-8deg);
+  pointer-events: none;
+}
+.ribbon {
+  display: flex;
+  align-items: center;
+  height: var(--ribbon-h);
+  overflow: hidden;
+  border-block: 3px solid var(--outline);
+  background: var(--rb-bg);
+  color: var(--rb-fg);
+}
+.ribbon[data-arte="mesclado"] { --rb-bg: #FFF1D0; --rb-fg: #4A1663; }
+.ribbon[data-arte="creme"] { --rb-bg: #FFFFFF; --rb-fg: #7A2FA6; }
+.ribbon[data-arte="confete"] { --rb-bg: #7A2FA6; --rb-fg: #FFF6E0; }
+.ribbon[data-arte="chocolate"] { --rb-bg: #5A2E1A; --rb-fg: #FFE2C2; }
+.ribbon__track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  white-space: nowrap;
+  font-family: var(--font-display);
+  font-size: calc(var(--ribbon-h) * 0.5);
+  line-height: 1;
+}
+/* margem em cada item (e não gap) para as duas metades terem a mesma largura e o laço não pular */
+.ribbon__track > * { flex: none; margin-right: 0.45em; }
+.ribbon__track svg { width: 0.48em; height: 0.48em; }
+
+/* Formas de fundo (no celular, só o sol e o roxo; o anel entra no computador) */
+.shape--sun { width: 46%; aspect-ratio: 1; top: 3%; right: 4%; background: var(--yellow); }
+.shape--plum { width: 34%; aspect-ratio: 1; bottom: 3%; left: 5%; background: var(--purple); }
+.shape--ring { display: none; }
+
+.hero__copy {
+  position: relative;
+  width: min(100% - 2 * var(--gutter), 1200px);
+  margin-inline: auto;
+  display: grid;
+  gap: 1.25rem;
+  padding-block: 0.75rem 2.5rem;
+}
+.hero h1 { font-size: var(--fs-h1); max-width: 12ch; color: var(--paper); }
+.hero h1 em { font-style: normal; color: var(--accent); }
+[data-preco-min], .flavor__price, .orderbar__sum span { white-space: nowrap; }
+.hero__lead { max-width: 34ch; color: var(--paper-muted); font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem); }
+/* Horário e área de entrega, logo abaixo dos botões */
+.hero__facts {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--paper-muted);
+  font-size: 0.9375rem;
+}
+.hero__facts li { display: flex; align-items: flex-start; gap: 0.5rem; }
+.hero__facts .icon { color: var(--accent); margin-top: 0.15em; }
+
+.actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.25rem; }
+.actions .btn { flex: 1 1 14rem; }
+
+@media (min-width: 900px) {
+  .hero__in {
+    width: min(100% - 2 * var(--gutter), 1200px);
+    margin-inline: auto;
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: center;
+    gap: clamp(3rem, 6vw, 6rem);
+    min-height: clamp(34rem, 78svh, 46rem);
+    padding-block: 3.5rem 2rem;
+  }
+  .hero__visual { order: 2; justify-self: center; width: 100%; max-width: 27rem; padding: 0; }
+  .hero__frame { width: 100%; }
+  .hero__media { box-shadow: 0 0 0 6px var(--outline); }
+  /* As faixas saem um pouco para a esquerda (no vão entre texto e foto) e até a borda direita */
+  .ribbons { left: -22%; width: 240%; transform: translateY(-50%) rotate(-8deg); }
+  .shape--sun { width: 78%; top: -8%; right: -18%; }
+  .shape--plum { width: 60%; bottom: -7%; left: -18%; }
+  .shape--ring { display: block; width: 30%; aspect-ratio: 1; bottom: 4%; right: -16%; border: 3px solid var(--lilac); }
+  .price-badge { right: -9%; bottom: 5%; }
+  .hero__copy { order: 1; width: auto; margin: 0; padding: 0; }
+  .hero h1 { max-width: 11ch; }
+  .actions .btn { flex: 0 1 auto; }
+}
+
+/* ---------- Sabores ---------- */
+.menu {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  overflow: clip;
+  background: var(--ink-1);
+  padding-block: calc(var(--space-section) - 1.5rem) calc(var(--space-section) + var(--curve-h));
+}
+/* Mancha roxa no canto, curva e torta */
+.shape--blob {
+  width: clamp(22rem, 60vw, 44rem);
+  aspect-ratio: 1;
+  top: -14%;
+  right: -22%;
+  border-radius: 42% 58% 62% 38% / 46% 38% 62% 54%;
+  background: var(--purple);
+  opacity: 0.55;
+}
+.menu__head { display: grid; gap: 1rem; margin-bottom: clamp(2rem, 5vw, 3.5rem); }
+.menu__head p { color: var(--paper-muted); max-width: 40ch; }
+.menu__note { margin-top: 2rem; color: var(--paper-muted); font-size: var(--fs-small); }
+.menu__fallback { color: var(--paper-muted); }
+
+/* Zona de entrega: botões redondos, o escolhido fica amarelo */
+.zones {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: clamp(1.5rem, 4vw, 2.5rem);
+  padding: clamp(1.1rem, 3vw, 1.6rem);
+  border-radius: 28px 28px 28px 8px;
+  background: var(--ink-2);
+  scroll-margin-block: 6rem;
+}
+.zones__hint, .zones__note { color: var(--paper-muted); font-size: 0.9375rem; max-width: 52ch; }
+.zones__list { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.zone {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 2.75rem;
+  padding: 0 1rem;
+  border: 2px solid rgb(201 155 219 / 0.45);
+  border-radius: 999px;
+  color: var(--paper);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s var(--ease-out), border-color 0.2s var(--ease-out), color 0.2s var(--ease-out);
+}
+.zone input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+.zone__fee { color: var(--yellow); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.zone:hover { border-color: var(--yellow); }
+.zone.is-on { background: var(--yellow); border-color: var(--yellow); color: var(--deep); }
+.zone.is-on .zone__fee { color: var(--deep); }
+.zone:has(input:focus-visible) { outline: 2px solid var(--yellow); outline-offset: 3px; }
+
+.flavors {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+@media (min-width: 700px) {
+  .flavors { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+}
+
+.flavor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.75rem 0.75rem 0.9rem;
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  background: var(--ink-2);
+  transition: border-color 0.3s var(--ease-out);
+}
+.flavor.is-picked { border-color: var(--accent); }
+
+/* Prancha curva atrás de cada geladão, numa cor do selo */
+.flavor__art { position: relative; aspect-ratio: 1; }
+.flavor__art::before {
+  content: "";
+  position: absolute;
+  inset: 8%;
+  border-radius: var(--blob, 50%);
+  background: var(--plate, var(--purple));
+  transition: border-radius 0.8s var(--ease-out);
+}
+.flavor:nth-child(4n + 1) { --blob: 58% 42% 55% 45% / 48% 58% 42% 52%; }
+.flavor:nth-child(4n + 2) { --blob: 44% 56% 46% 54% / 56% 44% 56% 44%; }
+.flavor:nth-child(4n + 3) { --blob: 52% 48% 40% 60% / 42% 52% 48% 58%; }
+.flavor:nth-child(4n + 4) { --blob: 46% 54% 60% 40% / 54% 46% 54% 46%; }
+.flavor[data-arte="mesclado"] { --plate: var(--yellow); }
+.flavor[data-arte="creme"] { --plate: var(--purple); }
+.flavor[data-arte="confete"] { --plate: var(--green); }
+.flavor[data-arte="chocolate"] { --plate: var(--lilac); }
+.flavor__art svg { position: relative; display: block; width: 100%; height: 100%; padding: 4%; }
+.flavor__art--photo::before { content: none; }
+.flavor__art--photo img { width: 100%; height: 100%; object-fit: cover; border-radius: calc(var(--radius) - 6px); }
+
+.flavor__body { display: grid; gap: 0.2rem; padding-inline: 0.25rem; flex: 1; align-content: start; }
+.flavor__name { font-size: clamp(1.1rem, 1rem + 0.45vw, 1.35rem); line-height: 1.15; }
+.flavor__price {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 1.125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.flavor__ctrl { margin-top: auto; }
+.flavor__add { width: 100%; min-height: 2.75rem; padding: 0 0.75rem; font-size: 0.9375rem; }
+.flavor__add .icon { width: 1.1em; height: 1.1em; }
+
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 2.75rem;
+  border: 2px solid var(--accent);
+  border-radius: 999px;
+}
+.stepper__btn {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin: -2px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--accent);
+  cursor: pointer;
+  transition: background-color 0.2s var(--ease-out), color 0.2s var(--ease-out);
+}
+.stepper__btn:hover { background: var(--accent-wash); color: var(--accent-bright); }
+.stepper__btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.stepper__qty {
+  min-width: 2ch;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Como pedir ---------- */
+.how {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  overflow: clip; /* clip mantém o sticky do título funcionando */
+  padding-block: calc(var(--space-section) - 1.5rem) calc(var(--space-section) + var(--curve-h));
+}
+/* Anel grosso roxo com fio amarelo, como as bordas do selo */
+.shape--halo {
+  width: clamp(20rem, 46vw, 36rem);
+  aspect-ratio: 1;
+  bottom: -12%;
+  left: -16%;
+  border: clamp(18px, 3vw, 34px) solid rgb(106 34 135 / 0.5);
+  outline: 2px solid rgb(255 210 63 / 0.45);
+  outline-offset: 12px;
+}
+.how__in { display: grid; gap: 2.5rem; }
+.how__head { display: grid; gap: 1.1rem; align-content: start; }
+.how__head > p { color: var(--paper-muted); max-width: 34ch; }
+
+/* Balão roxo com horário, pagamento e área de entrega */
+.info-card {
+  display: grid;
+  gap: 0.9rem;
+  margin: 0.5rem 0 0;
+  padding: 1.2rem 1.25rem;
+  list-style: none;
+  border-radius: 28px 28px 28px 8px;
+  background: var(--purple);
+  color: var(--paper);
+  max-width: 30rem;
+}
+.info-card li { display: flex; gap: 0.85rem; align-items: flex-start; }
+.info-card li + li { padding-top: 0.9rem; border-top: 1px solid rgb(255 244 214 / 0.18); }
+.info-card strong { color: var(--yellow); font-weight: 700; }
+.info-card .icon { width: 1.4em; height: 1.4em; color: var(--yellow); }
+
+.steps { list-style: none; margin: 0; padding: 0; }
+.steps li {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr;
+  gap: 1.25rem;
+  padding-block: 1.6rem;
+  border-top: 1px solid var(--line);
+}
+.steps li:last-child { border-bottom: 1px solid var(--line); }
+/* Número dentro de um selinho amarelo */
+.steps__n {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: var(--yellow);
+  box-shadow: 0 0 0 3px var(--ink-0), 0 0 0 6px var(--purple);
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--deep);
+}
+.steps h3 { margin-bottom: 0.5rem; }
+.steps p { color: var(--paper-muted); max-width: 42ch; }
+
+@media (min-width: 900px) {
+  .how__in { grid-template-columns: 5fr 6fr; gap: 6rem; align-items: start; }
+  .how__head { position: sticky; top: 7rem; }
+}
+
+/* ---------- Faixa final (roxo do selo) ---------- */
+.close {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--field);
+  color: var(--paper);
+  padding-block: calc(var(--space-section) - 2rem) calc(var(--space-section) + var(--curve-h));
+}
+/* Arco amarelo grande saindo do canto */
+.shape--arc {
+  width: clamp(26rem, 70vw, 52rem);
+  aspect-ratio: 1;
+  top: -30%;
+  left: -24%;
+  border: clamp(16px, 2.6vw, 30px) solid rgb(255 210 63 / 0.22);
+}
+.close__in { display: grid; gap: 2rem; align-items: center; justify-items: start; }
+.close__seal {
+  position: relative;
+  width: clamp(190px, 46vw, 340px);
+  aspect-ratio: 1;
+  justify-self: center;
+}
+/* Disco escuro atrás do selo */
+.close__seal::before {
+  content: "";
+  position: absolute;
+  inset: -7%;
+  border-radius: 50%;
+  background: var(--deep);
+  opacity: 0.5;
+  transform: translate(4%, 5%);
+}
+.close__seal svg { position: relative; display: block; width: 100%; height: 100%; }
+.close__text { display: grid; gap: 1.25rem; }
+.close h2 { color: var(--paper); max-width: 12ch; }
+.close__text > p { font-size: clamp(1.15rem, 1rem + 0.6vw, 1.4rem); max-width: 26ch; }
+@media (min-width: 900px) {
+  .close__in { grid-template-columns: 1.1fr 0.9fr; gap: 5rem; }
+  .close__text { order: 1; }
+  .close__seal { order: 2; }
+  .close .actions .btn { flex: 0 1 auto; }
+}
+
+/* ---------- Rodapé ---------- */
+.site-footer { background: var(--ink-0); }
+.site-footer__in {
+  display: grid;
+  gap: 2.5rem;
+  padding-block: 2.5rem 3rem;
+}
+.site-footer__brand { display: grid; gap: 1rem; justify-items: start; }
+.site-footer__seal { width: 120px; height: 120px; }
+.site-footer__brand p { color: var(--paper-muted); max-width: 24ch; }
+.site-footer h2 {
+  margin-bottom: 0.75rem;
+  font-family: var(--font-label);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.site-footer__col p, .site-footer li { color: var(--paper-muted); }
+.site-footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.4rem; }
+.site-footer a { text-decoration: none; transition: color 0.2s; }
+.site-footer a:hover { color: var(--accent); }
+.site-footer__legal {
+  padding-block: 1.25rem 6rem;
+  border-top: 1px solid var(--line);
+  color: var(--paper-muted);
+  font-size: var(--fs-small);
+}
+@media (min-width: 760px) {
+  .site-footer__in { grid-template-columns: repeat(3, 1fr); gap: 2.5rem 3rem; }
+  .site-footer__brand { grid-column: 1 / -1; grid-template-columns: auto 1fr; align-items: center; }
+}
+@media (min-width: 1000px) {
+  .site-footer__in { grid-template-columns: 1.3fr 1fr 1fr 1fr; gap: 3rem; }
+  .site-footer__brand { grid-column: auto; grid-template-columns: none; align-items: start; }
+}
+
+/* ---------- Barra do pedido ---------- */
+.orderbar {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 65;
+  padding-block: 0.75rem calc(0.75rem + env(safe-area-inset-bottom));
+  background: var(--deep);
+  border-top: 2px solid var(--yellow);
+  border-radius: 22px 22px 0 0;
+  box-shadow: 0 -10px 30px rgb(0 0 0 / 0.4);
+  transform: translateY(110%);
+  visibility: hidden;
+  transition: transform 0.45s var(--ease-out), visibility 0s linear 0.45s;
+}
+.orderbar.is-on {
+  transform: none;
+  visibility: visible;
+  transition: transform 0.45s var(--ease-out), visibility 0s;
+}
+.orderbar__in { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.orderbar__sum { display: grid; line-height: 1.3; }
+.orderbar__sum strong { font-weight: 700; }
+.orderbar__sum span { color: var(--accent); font-weight: 700; font-variant-numeric: tabular-nums; }
+.orderbar .btn { flex: none; }
+
+body.has-order { padding-bottom: 5.5rem; }
+
+/* ---------- WhatsApp flutuante + aviso ---------- */
+.fab {
+  position: fixed;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--deep);
+  box-shadow: 0 0 0 3px var(--deep), 0 6px 18px rgb(0 0 0 / 0.45);
+  transition: background-color 0.25s var(--ease-out), transform 0.3s var(--ease-out), opacity 0.3s var(--ease-out);
+}
+.fab:hover { background: var(--accent-bright); transform: translateY(-2px); }
+.fab .icon { width: 1.6rem; height: 1.6rem; }
+body.has-order .fab { opacity: 0; transform: translateY(1rem); pointer-events: none; visibility: hidden; }
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 5.5rem;
+  z-index: 70;
+  width: max-content;
+  max-width: calc(100% - 2rem);
+  padding: 0.85rem 1.25rem;
+  border-radius: 14px;
+  background: var(--cream);
+  color: var(--deep);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.5);
+  opacity: 0;
+  transform: translate(-50%, 0.75rem);
+  pointer-events: none;
+  transition: opacity 0.3s var(--ease-out), transform 0.3s var(--ease-out);
+}
+.toast.is-on { opacity: 1; transform: translate(-50%, 0); }
+body.has-order .toast { bottom: 6.5rem; }
+
+/* ---------- Movimento: uma gramática só (sobe de baixo, ease-out exponencial) ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(22px); filter: blur(6px); }
+    to   { opacity: 1; transform: none; filter: none; }
+  }
+  @keyframes settle {
+    from { transform: scale(1.07); }
+    to   { transform: scale(1); }
+  }
+  @keyframes pop {
+    from { opacity: 0; transform: scale(0.6); }
+    to   { opacity: 1; transform: none; }
+  }
+  .hero__media img { animation: settle 2.4s var(--ease-out) both; }
+  .hero h1, .hero__lead, .hero .actions, .hero__facts {
+    animation: rise 1s var(--ease-out) both;
+    animation-delay: calc(0.15s + var(--i, 0) * 0.14s);
+  }
+  .hero__visual .shape { animation: pop 1.2s var(--ease-out) both; }
+
+  @keyframes ribbon { to { transform: translateX(-50%); } }
+  .ribbon__track { animation: ribbon var(--dur, 30s) linear infinite; }
+  .ribbon:nth-child(even) .ribbon__track { animation-direction: reverse; }
+
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(-12deg) scale(1); }
+    50% { transform: rotate(-4deg) scale(1.06); }
+  }
+  .price-badge { animation: wiggle 2.6s ease-in-out infinite; }
+  .shape--plum { animation-delay: 0.12s; }
+  .shape--ring { animation-delay: 0.24s; }
+
+  /* Cards dos sabores aparecem uma vez, em sequência, quando a seção entra na tela */
+  .js .flavors:not(.is-in) .flavor { opacity: 0; transform: translateY(22px); }
+  .js .flavors .flavor {
+    transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out), border-color 0.3s var(--ease-out);
+    transition-delay: calc(var(--n, 0) * 90ms), calc(var(--n, 0) * 90ms), 0s;
+  }
+
+  /* O geladão balança e a prancha muda de forma no hover e quando entra no pedido */
+  .flavor__art svg { transition: transform 0.6s var(--ease-out); }
+  @media (hover: hover) {
+    .flavor:hover .flavor__art svg { transform: rotate(5deg) scale(1.03); }
+    .flavor:hover .flavor__art::before { border-radius: 50%; }
+  }
+  .flavor.is-picked .flavor__art svg { transform: rotate(5deg) scale(1.03); }
+  .flavor.is-picked .flavor__art::before { border-radius: 50%; }
+}

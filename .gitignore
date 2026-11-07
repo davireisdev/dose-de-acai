@@ -1,0 +1,5 @@
+# Configuração local do Claude Code (servidor de teste), não vai para o site
+.claude/
+
+# Arquivos da logo para redes sociais: ficam só no computador, o site não usa
+logo/
