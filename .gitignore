@@ -9,3 +9,6 @@ logo/
 
 .vercel
 .env*
+
+# Logs do Firebase CLI
+firebase-debug.log

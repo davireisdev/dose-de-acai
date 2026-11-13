@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Painel | Dose de Açaí</title>
+  <meta name="theme-color" content="#22072e">
+  <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
+  <link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Shrikhand&display=swap">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin">
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+    <symbol id="i-pen" viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+    <symbol id="i-out" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></symbol>
+    <symbol id="i-up" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  </svg>
+
+  <header class="site-header">
+    <div class="wrap site-header__in">
+      <a class="brand" href="../" aria-label="Ver o site">
+        <img class="brand__logo" src="../img/apple-touch-icon.png" width="46" height="46" alt="">
+        <span class="brand__name">Dose <span>de Açaí</span></span>
+      </a>
+      <span class="admin__tag">Painel</span>
+      <button type="button" class="btn btn--ghost btn--sm" id="sair" hidden>
+        <svg class="icon" aria-hidden="true"><use href="#i-out"/></svg>
+        Sair
+      </button>
+    </div>
+  </header>
+
+  <main class="wrap admin__main">
+
+    <!-- Sem Firebase configurado -->
+    <section class="panel" id="tela-config" hidden>
+      <h1>Painel ainda não ativado</h1>
+      <p>Falta preencher <code>js/firebase-config.js</code> com os dados do projeto Firebase.</p>
+    </section>
+
+    <!-- Login -->
+    <section class="panel panel--narrow" id="tela-login" hidden aria-labelledby="login-titulo">
+      <h1 id="login-titulo">Entrar no painel</h1>
+      <p class="muted">Use o e-mail e a senha da conta da loja.</p>
+      <form id="form-login" class="form" novalidate>
+        <label class="field">
+          <span>E-mail</span>
+          <input type="email" name="email" autocomplete="username" required inputmode="email">
+        </label>
+        <label class="field">
+          <span>Senha</span>
+          <input type="password" name="senha" autocomplete="current-password" required minlength="6">
+        </label>
+        <p class="form__error" id="login-erro" role="alert" hidden></p>
+        <button type="submit" class="btn btn--accent">Entrar</button>
+        <button type="button" class="link" id="esqueci">Esqueci minha senha</button>
+      </form>
+    </section>
+
+    <!-- Painel -->
+    <section id="tela-painel" hidden aria-labelledby="painel-titulo">
+      <div class="admin__head">
+        <div>
+          <h1 id="painel-titulo">Sabores</h1>
+          <p class="muted">O que você mudar aqui aparece no site na hora.</p>
+        </div>
+        <button type="button" class="btn btn--accent" id="novo">
+          <svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>
+          Novo sabor
+        </button>
+      </div>
+
+      <p class="panel panel--empty" id="vazio" hidden>
+        Nenhum sabor cadastrado ainda. Importe os sabores atuais do site ou crie o primeiro.
+        <button type="button" class="btn btn--ghost btn--sm" id="importar">Importar sabores atuais</button>
+      </p>
+
+      <ul class="sabores" id="lista"></ul>
+      <p class="muted admin__note">Toque em <strong>Esgotado</strong> quando um sabor acabar: ele fica apagado no site e volta quando você marcar <strong>Disponível</strong>.</p>
+    </section>
+  </main>
+
+  <!-- Formulário de sabor (novo ou edição) -->
+  <dialog class="modal" id="modal">
+    <form id="form-sabor" class="form" method="dialog" novalidate>
+      <h2 id="modal-titulo">Novo sabor</h2>
+      <label class="field">
+        <span>Nome</span>
+        <input type="text" name="nome" required maxlength="40" autocomplete="off" placeholder="Ex.: Leite Ninho">
+      </label>
+      <label class="field">
+        <span>Preço (R$)</span>
+        <input type="text" name="preco" required inputmode="decimal" placeholder="Ex.: 6 ou 6,50">
+      </label>
+      <fieldset class="field">
+        <legend>Estilo do desenho (quando não há foto)</legend>
+        <div class="artes" id="artes"></div>
+      </fieldset>
+      <div class="field">
+        <span>Foto (opcional)</span>
+        <div class="foto">
+          <img id="foto-previa" alt="" hidden>
+          <div class="foto__btns">
+            <label class="btn btn--ghost btn--sm">
+              Escolher foto
+              <input type="file" name="arquivo" accept="image/*" hidden>
+            </label>
+            <button type="button" class="btn btn--ghost btn--sm" id="foto-remover" hidden>Tirar foto</button>
+          </div>
+        </div>
+        <p class="muted small">A foto é reduzida antes de salvar. Sem foto, o site mostra o desenho do estilo escolhido.</p>
+      </div>
+      <label class="check">
+        <input type="checkbox" name="ativo" checked>
+        <span>Disponível para pedido</span>
+      </label>
+      <p class="form__error" id="sabor-erro" role="alert" hidden></p>
+      <div class="actions">
+        <button type="submit" class="btn btn--accent" id="salvar">Salvar</button>
+        <button type="button" class="btn btn--ghost" id="cancelar">Cancelar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="../js/menu.js"></script>
+  <script src="../js/desenho.js"></script>
+  <script type="module" src="admin.js"></script>
+</body>
+</html>

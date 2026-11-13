@@ -1,0 +1,38 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Quem pode mexer no cardápio: só contas listadas em "admins" (criadas no console).
+    function ehAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function saborValido(d) {
+      return d.keys().hasOnly(['nome', 'preco', 'arte', 'foto', 'ativo', 'ordem', 'atualizadoEm'])
+        && d.nome is string && d.nome.size() > 0 && d.nome.size() <= 40
+        && d.preco is number && d.preco > 0 && d.preco <= 1000
+        && d.arte in ['mesclado', 'creme', 'confete', 'chocolate']
+        && d.ativo is bool
+        && d.ordem is number
+        && (!('foto' in d) || (d.foto is string && d.foto.size() <= 400000));
+    }
+
+    // Todo mundo lê os sabores (é o cardápio público); só a admin escreve.
+    match /sabores/{id} {
+      allow read: if true;
+      allow create, update: if ehAdmin() && saborValido(request.resource.data);
+      allow delete: if ehAdmin();
+    }
+
+    // A lista de admins só muda pelo console do Firebase.
+    match /admins/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

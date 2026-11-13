@@ -1,5 +1,6 @@
 /*
-  Sabores e preços. Para trocar o cardápio, edite só este arquivo.
+  Sabores de RESERVA. O cardápio de verdade vem do painel (/admin) via Firebase;
+  esta lista só aparece se o Firebase estiver sem configuração ou fora do ar.
   (É .js e não .json de propósito: assim o site funciona até aberto direto do computador.)
 
   Campos de cada sabor:

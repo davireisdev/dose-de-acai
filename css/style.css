@@ -477,6 +477,20 @@ h3 { font-size: var(--fs-h3); }
 }
 .flavor.is-picked { border-color: var(--accent); }
 
+/* Sabor esgotado: continua no cardápio, mas apagado e sem botão */
+.flavor.is-out .flavor__art, .flavor.is-out .flavor__body { opacity: 0.45; }
+.flavor.is-out .flavor__art svg { filter: grayscale(0.6); }
+.flavor__out {
+  display: grid;
+  place-items: center;
+  min-height: 2.75rem;
+  border: 2px dashed rgb(201 155 219 / 0.45);
+  border-radius: 999px;
+  color: var(--paper-muted);
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
 /* Prancha curva atrás de cada geladão, numa cor do selo */
 .flavor__art { position: relative; aspect-ratio: 1; }
 .flavor__art::before {

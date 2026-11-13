@@ -1,0 +1,162 @@
+/* Painel da Dose de Açaí: aproveita os tokens e botões do style.css */
+
+.admin .site-header__in { gap: 0.75rem; }
+.admin__tag {
+  margin-right: auto;
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  background: var(--purple);
+  color: var(--paper);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.admin__main { padding-block: 1.5rem 5rem; }
+.admin h1 { font-size: clamp(1.8rem, 1.3rem + 2vw, 2.6rem); }
+.admin h2 { font-size: 1.5rem; }
+.muted { color: var(--paper-muted); }
+.small { font-size: 0.875rem; }
+code { font-family: ui-monospace, Consolas, monospace; font-size: 0.9em; color: var(--yellow); }
+
+.panel {
+  display: grid;
+  gap: 1rem;
+  padding: clamp(1.25rem, 4vw, 2rem);
+  border-radius: 28px 28px 28px 8px;
+  background: var(--ink-2);
+}
+.panel--narrow { max-width: 26rem; margin-inline: auto; margin-top: 2rem; }
+.panel--empty { justify-items: start; }
+
+.admin__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.admin__note { margin-top: 1.5rem; max-width: 46ch; }
+
+/* ---------- Formulários ---------- */
+.form { display: grid; gap: 1rem; }
+.field { display: grid; gap: 0.4rem; margin: 0; padding: 0; border: 0; min-width: 0; }
+.field > span, .field > legend { font-weight: 600; font-size: 0.9375rem; }
+.field input[type="text"], .field input[type="email"], .field input[type="password"] {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0 1rem;
+  border: 2px solid rgb(201 155 219 / 0.4);
+  border-radius: 14px;
+  background: var(--ink-0);
+  color: var(--paper);
+  font: inherit;
+}
+.field input:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; border-color: var(--yellow); }
+.form__error { color: #FFB3B3; font-weight: 600; }
+.form .actions { margin-top: 0.25rem; }
+.form .actions .btn { flex: 1 1 auto; }
+.link {
+  justify-self: start;
+  padding: 0.25rem 0;
+  border: 0;
+  background: none;
+  color: var(--paper-muted);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.link:hover { color: var(--yellow); }
+.check { display: flex; align-items: center; gap: 0.6rem; font-weight: 600; cursor: pointer; }
+.check input { width: 1.25rem; height: 1.25rem; accent-color: var(--yellow); }
+
+.artes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+.arte {
+  position: relative;
+  display: grid;
+  gap: 0.25rem;
+  justify-items: center;
+  padding: 0.5rem 0.25rem;
+  border: 2px solid transparent;
+  border-radius: 14px;
+  background: var(--ink-0);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+}
+.arte input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.arte svg { width: 100%; max-width: 3.5rem; aspect-ratio: 100 / 140; }
+.arte:has(input:checked) { border-color: var(--yellow); }
+.arte:has(input:focus-visible) { outline: 2px solid var(--yellow); outline-offset: 2px; }
+
+.foto { display: flex; align-items: center; gap: 1rem; }
+.foto img { width: 5.5rem; height: 5.5rem; object-fit: cover; border-radius: 14px; }
+.foto__btns { display: grid; gap: 0.5rem; }
+
+/* ---------- Lista de sabores ---------- */
+.sabores { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; }
+.sabor {
+  display: grid;
+  grid-template-columns: 4rem 1fr auto;
+  grid-template-areas: "art body order" "art ctrl ctrl";
+  gap: 0.5rem 0.9rem;
+  align-items: center;
+  padding: 0.75rem;
+  border: 2px solid transparent;
+  border-radius: 18px;
+  background: var(--ink-2);
+}
+.sabor.is-out { border-color: rgb(201 155 219 / 0.35); }
+.sabor.is-out .sabor__art, .sabor.is-out .sabor__body { opacity: 0.5; }
+.sabor__art {
+  grid-area: art;
+  width: 4rem;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--ink-0);
+  display: grid;
+  place-items: center;
+}
+.sabor__art img { width: 100%; height: 100%; object-fit: cover; }
+.sabor__art svg { width: 80%; height: 80%; }
+.sabor__body { grid-area: body; min-width: 0; }
+.sabor__name { font-family: var(--font-display); font-size: 1.2rem; line-height: 1.15; overflow-wrap: anywhere; }
+.sabor__price { color: var(--yellow); font-weight: 700; }
+.sabor__status { margin-left: 0.5rem; font-size: 0.8125rem; font-weight: 700; color: var(--paper-muted); }
+.sabor__order { grid-area: order; display: grid; gap: 0.25rem; }
+.sabor__ctrl { grid-area: ctrl; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.sabor__ctrl .btn { min-height: 2.5rem; padding-inline: 0.9rem; font-size: 0.875rem; }
+.iconbtn {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 2px solid rgb(201 155 219 / 0.4);
+  border-radius: 999px;
+  background: none;
+  color: var(--paper);
+  cursor: pointer;
+}
+.iconbtn:disabled { opacity: 0.3; cursor: default; }
+.iconbtn:hover:not(:disabled) { border-color: var(--yellow); color: var(--yellow); }
+.btn--danger { border-color: #FF8A8A; color: #FFB3B3; }
+.btn--danger:hover { background: rgb(255 138 138 / 0.12); }
+
+/* ---------- Modal ---------- */
+.modal {
+  width: min(100% - 2rem, 30rem);
+  max-height: calc(100svh - 2rem);
+  padding: clamp(1.25rem, 4vw, 2rem);
+  border: 0;
+  border-radius: 24px;
+  background: var(--ink-2);
+  color: var(--paper);
+}
+.modal::backdrop { background: rgb(10 2 14 / 0.7); }
+
+@media (min-width: 700px) {
+  .sabor { grid-template-columns: 4.5rem 1fr auto auto; grid-template-areas: "art body ctrl order"; }
+}
