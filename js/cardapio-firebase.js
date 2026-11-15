@@ -1,7 +1,7 @@
 // Cardápio em tempo real: lê a coleção "sabores" e entrega ao site (window.DoseCardapio).
 // Se o Firebase não estiver configurado ou falhar, o site fica com o js/menu.js.
 import { app, configurado, COLECAO, docParaSabor } from './firebase-init.js';
-import { getFirestore, collection, query, orderBy, onSnapshot }
+import { getFirestore, collection, doc, query, orderBy, onSnapshot }
   from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js';
 
 if (configurado && window.DoseCardapio) {
@@ -14,4 +14,9 @@ if (configurado && window.DoseCardapio) {
   }, (erro) => {
     console.warn('Cardápio do Firebase indisponível; usando o menu.js.', erro);
   });
+
+  // Loja aberta ou fechada (config/loja). Sem documento = aberta.
+  onSnapshot(doc(db, 'config', 'loja'), (snap) => {
+    if (window.DoseLoja) window.DoseLoja.set(snap.exists() ? snap.data() : {});
+  }, (erro) => console.warn('Estado da loja indisponível; considerando aberta.', erro));
 }

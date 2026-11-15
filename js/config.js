@@ -14,6 +14,8 @@ const SITE = {
 
   // Texto que abre a mensagem do pedido.
   pedidoAbertura: 'Olá! Quero fazer um pedido pelo site:',
+  // Abertura quando a loja está fechada (pedido agendado).
+  pedidoAberturaAgendado: 'Olá! Quero deixar um pedido AGENDADO pelo site:',
   // Linhas finais, para o cliente completar.
   pedidoFechamento: [
     'Meu endereço:',

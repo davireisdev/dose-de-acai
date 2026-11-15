@@ -107,6 +107,11 @@
 
   <a class="skip" href="#conteudo">Pular para o conteúdo</a>
 
+  <!-- Aviso de loja fechada (liga pelo painel /admin) -->
+  <div class="closed" id="aviso-fechado" role="status" hidden>
+    <p><strong>Estamos fechados agora.</strong> <span data-volta></span> Deixe seu pedido agendado que a gente confirma quando voltar.</p>
+  </div>
+
   <header class="site-header">
     <div class="wrap site-header__in">
       <a class="brand" href="#topo" aria-label="Dose de Açaí, voltar ao topo">
@@ -188,6 +193,11 @@
 
         <!-- Zona de entrega: a taxa entra no total (zonas e taxas em js/config.js) -->
         <div class="zones" id="zonas" role="radiogroup" aria-labelledby="zonas-titulo">
+          <div class="agenda" id="agenda-box" hidden>
+            <label for="agenda">Para quando é o pedido?</label>
+            <input type="text" id="agenda" maxlength="60" autocomplete="off" placeholder="Ex.: amanhã às 10h">
+            <p>Estamos fechados agora. Seu pedido vai agendado para o WhatsApp e a gente confirma quando voltar.</p>
+          </div>
           <h3 id="zonas-titulo">Onde entregar?</h3>
           <p class="zones__hint">A taxa de entrega entra no total do pedido.</p>
           <div class="zones__list" data-zonas></div>

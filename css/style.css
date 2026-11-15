@@ -823,3 +823,37 @@ body.has-order .toast { bottom: 6.5rem; }
   .flavor.is-picked .flavor__art svg { transform: rotate(5deg) scale(1.03); }
   .flavor.is-picked .flavor__art::before { border-radius: 50%; }
 }
+
+/* ---------- Loja fechada / pedido agendado ---------- */
+.closed {
+  position: relative;
+  z-index: 55;
+  padding: 0.65rem var(--gutter);
+  background: var(--yellow);
+  color: var(--deep);
+  text-align: center;
+  font-size: 0.9375rem;
+  line-height: 1.4;
+}
+.closed p { max-width: 60rem; margin-inline: auto; }
+.closed strong { font-weight: 800; }
+.agenda {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 2px solid var(--yellow);
+  border-radius: 20px;
+}
+.agenda label { font-weight: 700; }
+.agenda input {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0 1rem;
+  border: 2px solid rgb(201 155 219 / 0.5);
+  border-radius: 14px;
+  background: var(--ink-0);
+  color: var(--paper);
+  font: inherit;
+}
+.agenda input:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; border-color: var(--yellow); }
+.agenda p { color: var(--paper-muted); font-size: 0.9375rem; }

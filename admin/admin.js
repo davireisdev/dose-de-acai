@@ -2,7 +2,7 @@
 import { app, configurado, COLECAO, ESTILOS, docParaSabor } from '../js/firebase-init.js';
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, setPersistence, browserLocalPersistence }
   from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js';
-import { getFirestore, collection, doc, query, orderBy, onSnapshot, addDoc, updateDoc, deleteDoc, writeBatch, serverTimestamp }
+import { getFirestore, collection, doc, query, orderBy, onSnapshot, addDoc, updateDoc, deleteDoc, setDoc, writeBatch, serverTimestamp }
   from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js';
 
 const $ = (sel, el = document) => el.querySelector(sel);
@@ -91,11 +91,59 @@ function iniciar() {
     if (user) {
       mostrar('painel');
       escutar();
+      escutarLoja();
     } else {
       if (pararLista) { pararLista(); pararLista = null; }
+      if (pararLoja) { pararLoja(); pararLoja = null; }
       formLogin.reset();
       mostrar('login');
     }
+  });
+
+  /* ---------- Loja aberta / fechada ---------- */
+  const refLoja = doc(db, 'config', 'loja');
+  const caixaLoja = $('#loja');
+  const campoVolta = $('#loja-volta');
+  const botaoLoja = $('#loja-alternar');
+  let lojaFechada = false;
+  let pararLoja = null;
+
+  const desenharLoja = (d) => {
+    lojaFechada = Boolean(d && d.fechado);
+    caixaLoja.classList.toggle('is-closed', lojaFechada);
+    $('#loja-estado').textContent = lojaFechada ? 'Loja fechada' : 'Loja aberta';
+    $('#loja-ajuda').textContent = lojaFechada
+      ? 'O site mostra "Estamos fechados" e os clientes deixam o pedido agendado.'
+      : 'Os clientes fazem pedidos normalmente.';
+    botaoLoja.textContent = lojaFechada ? 'Abrir a loja' : 'Fechar a loja';
+    botaoLoja.className = 'btn ' + (lojaFechada ? 'btn--accent' : 'btn--ghost');
+    if (document.activeElement !== campoVolta) campoVolta.value = (d && d.volta) || '';
+  };
+  const escutarLoja = () => {
+    if (pararLoja) return;
+    pararLoja = onSnapshot(refLoja, (snap) => desenharLoja(snap.exists() ? snap.data() : {}), (err) => {
+      console.error(err);
+      aviso(textoErro(err), 6000);
+    });
+  };
+  const gravarLoja = async (fechado) => {
+    await setDoc(refLoja, { fechado, volta: campoVolta.value.trim().slice(0, 80), atualizadoEm: serverTimestamp() });
+  };
+  botaoLoja.addEventListener('click', async () => {
+    botaoLoja.disabled = true;
+    const fechar = !lojaFechada; // guarda antes: o estado muda assim que o banco responde
+    try {
+      await gravarLoja(fechar);
+      aviso(fechar ? 'Loja fechada. O site já avisa os clientes.' : 'Loja aberta de novo.');
+    } catch (err) {
+      console.error(err);
+      aviso(textoErro(err), 6000);
+    } finally {
+      botaoLoja.disabled = false;
+    }
+  });
+  campoVolta.addEventListener('change', async () => {
+    try { await gravarLoja(lojaFechada); aviso('Aviso de volta salvo.'); } catch (err) { console.error(err); aviso(textoErro(err), 6000); }
   });
 
   /* ---------- Lista ---------- */

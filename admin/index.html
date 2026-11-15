@@ -79,6 +79,18 @@
         </button>
       </div>
 
+      <section class="loja" id="loja" aria-labelledby="loja-estado">
+        <div class="loja__txt">
+          <strong id="loja-estado">Loja aberta</strong>
+          <p class="muted small" id="loja-ajuda">Os clientes fazem pedidos normalmente.</p>
+        </div>
+        <label class="field loja__volta">
+          <span>Voltamos quando? (opcional)</span>
+          <input type="text" id="loja-volta" maxlength="80" autocomplete="off" placeholder="Ex.: amanhã às 9h">
+        </label>
+        <button type="button" class="btn btn--ghost" id="loja-alternar">Fechar a loja</button>
+      </section>
+
       <p class="panel panel--empty" id="vazio" hidden>
         Nenhum sabor cadastrado ainda. Importe os sabores atuais do site ou crie o primeiro.
         <button type="button" class="btn btn--ghost btn--sm" id="importar">Importar sabores atuais</button>

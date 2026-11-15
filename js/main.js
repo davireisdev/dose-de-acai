@@ -17,6 +17,8 @@
   // Lista de sabores em uso. Começa com o menu.js (reserva) e pode ser trocada
   // pelo Firebase (js/cardapio-firebase.js) via window.DoseCardapio.set(lista).
   let lista = SABORES.slice();
+  let loja = { fechado: false, volta: '' }; // vem do Firebase (config/loja)
+  let agenda = ''; // "para quando" quando a loja está fechada
   const ativos = () => lista.filter((s) => s.ativo !== false);
 
   const renderPrecoMinimo = () => {
@@ -258,8 +260,9 @@
 
   const mensagemPedido = () => {
     const r = resumo();
+    const agendado = loja.fechado;
     return [
-      SITE.pedidoAbertura,
+      agendado ? SITE.pedidoAberturaAgendado : SITE.pedidoAbertura,
       '',
       ...r.linhas,
       '',
@@ -267,7 +270,8 @@
       zona ? `Entrega (${zona.nome}): ${preco(r.taxa)}` : 'Entrega: a combinar',
       `Total: ${preco(r.total)}`,
       '',
-      ...[].concat(SITE.pedidoFechamento || []),
+      ...(agendado ? [`Agendado para: ${agenda.trim()}`] : []),
+      ...[].concat(SITE.pedidoFechamento || []).filter((l) => !(agendado && /^Dia e hor/.test(l))),
     ].join('\n');
   };
 
@@ -285,16 +289,19 @@
     // Três estados: abaixo do mínimo, sem zona escolhida, pronto para enviar.
     const r = resumo();
     const faltam = Math.max(0, MINIMO - r.qtd);
-    const pronto = faltam === 0 && (zona || !ZONAS.length);
+    const faltaAgenda = loja.fechado && agenda.trim().length < 2;
+    const pronto = faltam === 0 && (zona || !ZONAS.length) && !faltaAgenda;
 
     $('[data-order-count]', orderbar).textContent = geladoes(r.qtd);
     $('[data-order-detail]', orderbar).textContent = faltam
       ? `Faltam ${faltam} (mínimo ${MINIMO})`
-      : pronto ? `Total ${preco(r.total)}` : `${preco(r.soma)} + entrega`;
+      : pronto ? `Total ${preco(r.total)}` : (zona && faltaAgenda ? 'Falta dizer para quando' : `${preco(r.soma)} + entrega`);
     orderbar.classList.toggle('is-on', r.qtd > 0);
     document.body.classList.toggle('has-order', r.qtd > 0);
 
-    rotulo.textContent = faltam || pronto ? 'Enviar pedido' : 'Escolher zona';
+    rotulo.textContent = faltam ? 'Enviar pedido'
+      : pronto ? (loja.fechado ? 'Enviar pedido agendado' : 'Enviar pedido')
+      : (zona || !ZONAS.length ? 'Informar quando' : 'Escolher zona');
     $('use', enviar).setAttribute('href', faltam || pronto ? '#i-chat' : '#i-pin');
     enviar.classList.toggle('is-blocked', faltam > 0);
     enviar.setAttribute('aria-disabled', faltam > 0 ? 'true' : 'false');
@@ -337,6 +344,23 @@
     if (removidos.length) showToast(`${listaPt(removidos)} esgotou e saiu do seu pedido.`, 6000);
   };
   window.DoseCardapio = { set: definirLista, get: () => lista.slice() };
+
+  // Loja aberta/fechada (vem do painel via Firebase). Fechada = pedido agendado.
+  const aviso = $('#aviso-fechado');
+  const agendaBox = $('#agenda-box');
+  const campoAgenda = $('#agenda');
+  const definirLoja = (dados) => {
+    loja = { fechado: Boolean(dados && dados.fechado), volta: String((dados && dados.volta) || '').slice(0, 80) };
+    document.body.classList.toggle('is-closed', loja.fechado);
+    if (aviso) aviso.hidden = !loja.fechado;
+    if (agendaBox) agendaBox.hidden = !loja.fechado;
+    $$('[data-volta]').forEach((n) => { n.textContent = loja.volta ? `Voltamos ${loja.volta}.` : ''; });
+    atualizar();
+  };
+  window.DoseLoja = { set: definirLoja };
+  if (campoAgenda) {
+    campoAgenda.addEventListener('input', () => { agenda = campoAgenda.value; atualizar(); });
+  }
 
   if (root) {
     root.addEventListener('click', (e) => {
@@ -384,6 +408,15 @@
       const primeiro = $('input[name="zona"]', caixa);
       if (primeiro) setTimeout(() => primeiro.focus({ preventScroll: true }), reduzir ? 0 : 450);
       showToast('Escolha a zona de entrega para calcular o total.');
+      return;
+    }
+    if (loja.fechado && agenda.trim().length < 2) {
+      e.preventDefault();
+      const campo = $('#agenda');
+      const reduzir = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      campo.scrollIntoView({ behavior: reduzir ? 'auto' : 'smooth', block: 'center' });
+      setTimeout(() => campo.focus({ preventScroll: true }), reduzir ? 0 : 450);
+      showToast('Diga para quando é o pedido agendado.');
       return;
     }
     if (numero) return; // o link já leva a mensagem pronta

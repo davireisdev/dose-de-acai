@@ -37,6 +37,17 @@ service cloud.firestore {
       allow delete: if ehAdmin();
     }
 
+    // Loja aberta/fechada: todo mundo lê, só a admin muda.
+    match /config/loja {
+      allow read: if true;
+      allow create, update: if ehAdmin()
+        && request.resource.data.keys().hasOnly(['fechado', 'volta', 'atualizadoEm'])
+        && request.resource.data.fechado is bool
+        && (!('volta' in request.resource.data)
+            || (request.resource.data.volta is string && request.resource.data.volta.size() <= 80));
+      allow delete: if false;
+    }
+
     // A lista de admins só muda pelo console do Firebase.
     match /admins/{uid} {
       allow read: if request.auth != null && request.auth.uid == uid;

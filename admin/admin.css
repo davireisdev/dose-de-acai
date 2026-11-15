@@ -197,3 +197,21 @@ code { font-family: ui-monospace, Consolas, monospace; font-size: 0.9em; color: 
   cursor: pointer;
 }
 @media (max-width: 380px) { .visual { grid-template-columns: 1fr; } .visual__previa { max-width: 9rem; } }
+
+/* ---------- Loja aberta/fechada ---------- */
+.loja {
+  display: grid;
+  gap: 0.9rem;
+  margin-bottom: 1.25rem;
+  padding: 1rem 1.1rem;
+  border: 2px solid var(--green);
+  border-radius: 22px;
+  background: var(--ink-2);
+}
+.loja.is-closed { border-color: var(--yellow); background: rgb(255 210 63 / 0.1); }
+.loja__txt strong { font-family: var(--font-display); font-size: 1.3rem; font-weight: 400; }
+.loja.is-closed .loja__txt strong { color: var(--yellow); }
+.loja .btn { justify-self: start; }
+@media (min-width: 700px) {
+  .loja { grid-template-columns: 1fr 18rem auto; align-items: end; }
+}
