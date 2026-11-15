@@ -1,5 +1,5 @@
 // Painel da Dose de Açaí: login da dona e cadastro dos sabores no Firestore.
-import { app, configurado, COLECAO, ARTES, docParaSabor } from '../js/firebase-init.js';
+import { app, configurado, COLECAO, ESTILOS, docParaSabor } from '../js/firebase-init.js';
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, setPersistence, browserLocalPersistence }
   from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js';
 import { getFirestore, collection, doc, query, orderBy, onSnapshot, addDoc, updateDoc, deleteDoc, writeBatch, serverTimestamp }
@@ -7,7 +7,7 @@ import { getFirestore, collection, doc, query, orderBy, onSnapshot, addDoc, upda
 
 const $ = (sel, el = document) => el.querySelector(sel);
 const $$ = (sel, el = document) => [...el.querySelectorAll(sel)];
-const { desenho } = window.DoseDesenho;
+const { desenho, estiloDe, padroes } = window.DoseDesenho;
 
 const telas = { config: $('#tela-config'), login: $('#tela-login'), painel: $('#tela-painel') };
 const mostrar = (qual) => Object.entries(telas).forEach(([k, el]) => { el.hidden = k !== qual; });
@@ -191,7 +191,7 @@ function iniciar() {
       const batch = writeBatch(db);
       const reserva = typeof SABORES === 'undefined' ? [] : SABORES; // de ../js/menu.js
       reserva.forEach((s, k) => {
-        batch.set(doc(colecao), { nome: s.nome, preco: s.preco, arte: s.arte || 'mesclado', ativo: true, ordem: k, atualizadoEm: serverTimestamp() });
+        batch.set(doc(colecao), { nome: s.nome, preco: s.preco, arte: s.arte || 'mesclado', visual: (ESTILOS.find((e) => e.id === (s.arte || 'mesclado')) || ESTILOS[0]).visual, ativo: true, ordem: k, atualizadoEm: serverTimestamp() });
       });
       await batch.commit();
       aviso('Sabores importados. Eles já estão no site.');
@@ -212,12 +212,48 @@ function iniciar() {
   let editando = null;
   let foto = '';
 
-  $('#artes').innerHTML = ARTES.map((a, i) => `
+  const COR_NOMES = ['base', 'onda', 'pintas'];
+  const visualAtual = () => ({
+    padrao: form.padrao.value || 'ondas',
+    base: form.base.value.toUpperCase(),
+    onda: form.onda.value.toUpperCase(),
+    pintas: form.pintas.value.toUpperCase(),
+  });
+  const mesmoVisual = (a, b) => a.padrao === b.padrao && COR_NOMES.every((k) => a[k].toUpperCase() === b[k].toUpperCase());
+
+  $('#padroes').innerHTML = padroes.map((p, i) => `
+    <label class="padrao"><input type="radio" name="padrao" value="${p.id}" ${i === 0 ? 'checked' : ''}>${p.nome}</label>`).join('');
+  $('#artes').innerHTML = ESTILOS.map((e) => `
     <label class="arte">
-      <input type="radio" name="arte" value="${a}" ${i === 0 ? 'checked' : ''}>
-      ${desenho({ id: 'form-' + a, arte: a })}
-      <span>${{ mesclado: 'Mesclado', creme: 'Creme', confete: 'Confete', chocolate: 'Chocolate' }[a]}</span>
+      <input type="radio" name="modelo" value="${e.id}">
+      ${desenho({ id: 'modelo-' + e.id, visual: e.visual })}
+      <span>${e.nome}</span>
     </label>`).join('');
+
+  // Prévia ao vivo e campos de cor que fazem sentido para o padrão escolhido.
+  const atualizarPrevia = () => {
+    const v = visualAtual();
+    const sabor = { id: 'previa', visual: v };
+    const prev = $('#visual-previa');
+    prev.style.setProperty('--plate', estiloDe(sabor).plate);
+    prev.innerHTML = desenho(sabor);
+    $$('.cor[data-so]', form).forEach((el) => { el.hidden = el.dataset.so !== v.padrao; });
+    // destaca o modelo pronto igual ao visual atual
+    $$('.arte input', form).forEach((r) => { r.checked = mesmoVisual(ESTILOS.find((e) => e.id === r.value).visual, v); });
+  };
+  const aplicarVisual = (v) => {
+    form.padrao.value = v.padrao;
+    form.base.value = v.base;
+    form.onda.value = v.onda;
+    form.pintas.value = v.pintas;
+    atualizarPrevia();
+  };
+  form.addEventListener('input', (e) => {
+    if (['padrao', 'base', 'onda', 'pintas'].includes(e.target.name)) atualizarPrevia();
+  });
+  form.addEventListener('change', (e) => {
+    if (e.target.name === 'modelo') aplicarVisual(ESTILOS.find((x) => x.id === e.target.value).visual);
+  });
 
   const mostrarFoto = () => {
     previa.hidden = !foto;
@@ -233,9 +269,10 @@ function iniciar() {
     if (s) {
       form.nome.value = s.nome;
       form.preco.value = String(s.preco).replace('.', ',');
-      form.arte.value = s.arte;
       form.ativo.checked = s.ativo;
     }
+    const inicial = s ? (s.visual || (ESTILOS.find((e) => e.id === s.arte) || ESTILOS[0]).visual) : ESTILOS[0].visual;
+    aplicarVisual(inicial);
     foto = s ? s.foto : '';
     mostrarFoto();
     modal.showModal();
@@ -270,7 +307,8 @@ function iniciar() {
     const dados = {
       nome,
       preco: Math.round(valor * 100) / 100,
-      arte: form.arte.value,
+      arte: (ESTILOS.find((e) => mesmoVisual(e.visual, visualAtual())) || { id: 'personalizado' }).id,
+      visual: visualAtual(),
       foto,
       ativo: form.ativo.checked,
       ordem: editando ? editando.ordem : sabores.length,

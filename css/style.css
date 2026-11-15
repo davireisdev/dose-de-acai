@@ -322,10 +322,6 @@ h3 { font-size: var(--fs-h3); }
   background: var(--rb-bg);
   color: var(--rb-fg);
 }
-.ribbon[data-arte="mesclado"] { --rb-bg: #FFF1D0; --rb-fg: #4A1663; }
-.ribbon[data-arte="creme"] { --rb-bg: #FFFFFF; --rb-fg: #7A2FA6; }
-.ribbon[data-arte="confete"] { --rb-bg: #7A2FA6; --rb-fg: #FFF6E0; }
-.ribbon[data-arte="chocolate"] { --rb-bg: #5A2E1A; --rb-fg: #FFE2C2; }
 .ribbon__track {
   display: flex;
   align-items: center;
@@ -505,10 +501,6 @@ h3 { font-size: var(--fs-h3); }
 .flavor:nth-child(4n + 2) { --blob: 44% 56% 46% 54% / 56% 44% 56% 44%; }
 .flavor:nth-child(4n + 3) { --blob: 52% 48% 40% 60% / 42% 52% 48% 58%; }
 .flavor:nth-child(4n + 4) { --blob: 46% 54% 60% 40% / 54% 46% 54% 46%; }
-.flavor[data-arte="mesclado"] { --plate: var(--yellow); }
-.flavor[data-arte="creme"] { --plate: var(--purple); }
-.flavor[data-arte="confete"] { --plate: var(--green); }
-.flavor[data-arte="chocolate"] { --plate: var(--lilac); }
 .flavor__art svg { position: relative; display: block; width: 100%; height: 100%; padding: 4%; }
 .flavor__art--photo::before { content: none; }
 .flavor__art--photo img { width: 100%; height: 100%; object-fit: cover; border-radius: calc(var(--radius) - 6px); }

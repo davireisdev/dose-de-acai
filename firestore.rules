@@ -8,11 +8,23 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
 
+    function corOk(c) {
+      return c is string && c.matches('^#[0-9A-Fa-f]{6}$');
+    }
+
+    function visualOk(v) {
+      return v is map
+        && v.keys().hasOnly(['padrao', 'base', 'onda', 'pintas'])
+        && v.padrao in ['ondas', 'liso', 'pintas', 'confete']
+        && corOk(v.base) && corOk(v.onda) && corOk(v.pintas);
+    }
+
     function saborValido(d) {
-      return d.keys().hasOnly(['nome', 'preco', 'arte', 'foto', 'ativo', 'ordem', 'atualizadoEm'])
+      return d.keys().hasOnly(['nome', 'preco', 'arte', 'foto', 'visual', 'ativo', 'ordem', 'atualizadoEm'])
         && d.nome is string && d.nome.size() > 0 && d.nome.size() <= 40
         && d.preco is number && d.preco > 0 && d.preco <= 1000
-        && d.arte in ['mesclado', 'creme', 'confete', 'chocolate']
+        && d.arte in ['mesclado', 'creme', 'confete', 'chocolate', 'acai', 'morango', 'maracuja', 'coco', 'limao', 'manga', 'uva', 'cafe', 'pacoca', 'personalizado']
+        && (!('visual' in d) || visualOk(d.visual))
         && d.ativo is bool
         && d.ordem is number
         && (!('foto' in d) || (d.foto is string && d.foto.size() <= 400000));

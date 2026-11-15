@@ -7,7 +7,9 @@ export const configurado = Boolean(FIREBASE_CONFIG.projectId && FIREBASE_CONFIG.
 export const app = configurado ? initializeApp(FIREBASE_CONFIG) : null;
 
 export const COLECAO = 'sabores';
-export const ARTES = ['mesclado', 'creme', 'confete', 'chocolate'];
+// Estilos prontos (definidos em js/desenho.js, carregado antes deste módulo).
+export const ESTILOS = (window.DoseDesenho && window.DoseDesenho.estilos) || [];
+export const ARTES = ESTILOS.map((e) => e.id);
 
 // Converte um documento do Firestore no formato que o site já entende.
 export const docParaSabor = (snap) => {
@@ -17,6 +19,7 @@ export const docParaSabor = (snap) => {
     nome: String(d.nome || ''),
     preco: Number(d.preco) || 0,
     arte: ARTES.includes(d.arte) ? d.arte : 'mesclado',
+    visual: window.DoseDesenho ? window.DoseDesenho.visualValido(d.visual) : null,
     foto: typeof d.foto === 'string' && d.foto.startsWith('data:image/') ? d.foto : '',
     ativo: d.ativo !== false,
     ordem: Number(d.ordem) || 0,

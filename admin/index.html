@@ -102,7 +102,18 @@
         <input type="text" name="preco" required inputmode="decimal" placeholder="Ex.: 6 ou 6,50">
       </label>
       <fieldset class="field">
-        <legend>Estilo do desenho (quando não há foto)</legend>
+        <legend>Monte o visual do sabor</legend>
+        <p class="muted small">É o desenho que aparece no site quando não há foto.</p>
+        <div class="visual">
+          <div class="visual__previa" id="visual-previa" role="img" aria-label="Prévia do geladão"></div>
+          <div class="visual__ctrl">
+            <div class="padroes" id="padroes" role="radiogroup" aria-label="Padrão"></div>
+            <label class="cor"><span>Cor principal</span><input type="color" name="base" value="#6A2287"></label>
+            <label class="cor" data-so="ondas"><span>Cor das ondas</span><input type="color" name="onda" value="#FFF4D6"></label>
+            <label class="cor" data-so="pintas"><span>Cor das pintinhas</span><input type="color" name="pintas" value="#FFF4D6"></label>
+          </div>
+        </div>
+        <p class="muted small">Ou comece por um modelo pronto e ajuste as cores:</p>
         <div class="artes" id="artes"></div>
       </fieldset>
       <div class="field">

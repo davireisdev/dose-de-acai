@@ -77,7 +77,7 @@
     return ok;
   };
 
-  const { desenho } = window.DoseDesenho;
+  const { desenho, estiloDe } = window.DoseDesenho;
 
   /* ---------- Faixas dos sabores em volta da foto do topo ---------- */
   const SVGNS = 'http://www.w3.org/2000/svg';
@@ -85,7 +85,7 @@
   const separador = (sabor, k) => {
     const svg = document.createElementNS(SVGNS, 'svg');
     svg.setAttribute('viewBox', '0 0 20 20');
-    if (sabor.arte === 'confete') {
+    if (sabor.arte === 'confete' || (sabor.visual && sabor.visual.padrao === 'confete')) {
       const c = document.createElementNS(SVGNS, 'circle');
       c.setAttribute('cx', '10'); c.setAttribute('cy', '10'); c.setAttribute('r', '9');
       c.setAttribute('fill', CONFEITOS[k % CONFEITOS.length]);
@@ -107,7 +107,9 @@
     ativos().forEach((sabor) => {
       const faixa = document.createElement('div');
       faixa.className = 'ribbon';
-      faixa.dataset.arte = sabor.arte || 'mesclado';
+      const est = estiloDe(sabor);
+      faixa.style.setProperty('--rb-bg', est.rbBg);
+      faixa.style.setProperty('--rb-fg', est.rbFg);
       const trilho = document.createElement('div');
       trilho.className = 'ribbon__track';
       for (let k = 0; k < REPETICOES * 2; k++) {
@@ -143,6 +145,7 @@
     li.dataset.id = sabor.id;
     li.dataset.arte = (sabor.imagem || sabor.foto) ? 'foto' : (sabor.arte || 'mesclado');
     li.style.setProperty('--n', n);
+    li.style.setProperty('--plate', estiloDe(sabor).plate);
 
     const arte = document.createElement('div');
     arte.className = 'flavor__art';
